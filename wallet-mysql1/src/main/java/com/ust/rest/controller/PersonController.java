@@ -1,42 +1,41 @@
 package com.ust.rest.controller;
 
+import com.ust.rest.dto.PersonBasicDetailsDTO;
+import com.ust.rest.dto.PersonDocumentDetailsDTO;
 import com.ust.rest.model.Person;
-import com.ust.rest.service.PersonService; // Assume this service is implemented
+import com.ust.rest.service.DocumentsService;
+import com.ust.rest.service.PersonalDetailsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/persons")
+@RequestMapping("/persons")
 public class PersonController {
+
+    @Autowired
+    private PersonalDetailsService detailsService;
     
     @Autowired
-    private PersonService personService;
+    private DocumentsService documentService;
 
-    @GetMapping
-    public List<Person> getAllPersons() {
-        return personService.getAllPersons();
+    @GetMapping("/basic-details")
+    public List<PersonBasicDetailsDTO> getAllPersonsBasicDetails() {
+        return detailsService.getAllPersonsBasicDetails();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Person> getPersonById(@PathVariable long id) {
-        return personService.getPersonById(id);
+    
+    @GetMapping("/{id}/basic-details")
+    public PersonBasicDetailsDTO getDocumentsOfPersonById(@PathVariable Long id) {
+        return detailsService.getPersonBasicDetailsById(id);
     }
-
-    @PostMapping
-    public Person createPerson(@RequestBody Person person) {
-        return personService.createPerson(person);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable long id, @RequestBody Person person) {
-        return personService.updatePerson(id, person);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePerson(@PathVariable long id) {
-        return personService.deletePerson(id);
+    
+    @GetMapping("/{id}/all-details")
+    public PersonDocumentDetailsDTO getAllDocumentsOfPersonById(@PathVariable Long id) {
+        return documentService.getAllDocsById(id);
     }
 }

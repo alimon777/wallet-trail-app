@@ -17,11 +17,14 @@ public class CardDetails {
 
     @NotBlank(message = "Card number is required")
     private String cardNumber;
-
+    
+    @NotBlank(message = "Card number is required")
     private String cardHolderName;
 
+    @NotBlank(message = "Card number is required")
     private String expiryDate; // Consider using LocalDate
 
+    @NotBlank(message = "Card number is required")
     private String cardType; // e.g., Credit, Debit
 
     @ManyToOne

@@ -41,22 +41,18 @@ public class Person {
     private String phoneNumber;
 
     private String address; // Optional additional detail
-
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private AadharDetails aadharDetails;
-
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private PanDetails panDetails;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GovtId> govtId; // A person can have multiple GovtIds
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DrivingLicense> drivingLicenses;
-
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private BirthCertificate birthCertificate;
-
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VoterIdDetails> voterIdDetails;
+    private List<Certificate> certificates;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BankDetails> bankDetails; // A person can have multiple bank details
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BankDetails> bankDetails;
+    private List<VisaDetails> visaDetails; // A person can have multiple visas
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InsuranceDetails> insuranceDetails; // A person can have multiple insurance policies
+
 }
