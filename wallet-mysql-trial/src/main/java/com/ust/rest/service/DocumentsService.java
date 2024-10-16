@@ -1,6 +1,7 @@
 package com.ust.rest.service;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,16 @@ import com.ust.rest.model.GovtId;
 import com.ust.rest.model.InsuranceDetails;
 import com.ust.rest.model.Person;
 import com.ust.rest.model.VisaDetails;
+import com.ust.rest.repository.BankDetailsRepository;
 import com.ust.rest.repository.PersonRepository;
 
 @Service
 public class DocumentsService {
 	@Autowired
 	private PersonRepository personRepository;
+	
+	@Autowired
+	private BankDetailsRepository bankRepository;
 	
 	public Person getAllDocsById(Long personId) {
 		Person person = personRepository.findById(personId).get();
@@ -64,13 +69,43 @@ public class DocumentsService {
 	    return documents;
 	}
 	
-	//Post service functions
+	public <T> List<T> addDocumentForPersonWithId(Long personId, T document, Function<Person, List<T>> getDocumentList, BiConsumer<Person, List<T>> setDocumentList) {
+	    Person person = getAllDocsById(personId);           // Get the person object by ID
+	    List<T> documents = getDocumentList.apply(person);  // Get the list of documents (GovtIds or Certificates)
+	    documents.add(document);                            // Add the new document to the list
+	    setDocumentList.accept(person, documents);          // Set the updated list in the person object
+	    personRepository.save(person);                      // Save the updated person
+	    return getDocumentList.apply(person);               // Return the updated list
+	}
+
+	// To add GovtId
 	public List<GovtId> addGovtIdForPersonWithId(Long personId, GovtId govtId) {
-		Person person = getAllDocsById(personId);
-		List<GovtId> govtIds = person.getGovtIds();
-		govtIds.add(govtId);
-		person.setGovtIds(govtIds);
-    	return personRepository.save(person).getGovtIds();
-    }
+	    return addDocumentForPersonWithId(personId, govtId, Person::getGovtIds, Person::setGovtIds);
+	}
+
+	// To add Certificate
+	public List<Certificate> addCertificatesForPersonWithId(Long personId, Certificate certificate) {
+	    return addDocumentForPersonWithId(personId, certificate, Person::getCertificates, Person::setCertificates);
+	}
+	
+	public List<BankDetails> addBankDetailsForPersonWithId(Long personId, BankDetails bankDetail) {
+	    return addDocumentForPersonWithId(personId, bankDetail, Person::getBankDetails, Person::setBankDetails);
+	}
+	
+	public List<VisaDetails> addVisaDetailsForPersonWithId(Long personId, VisaDetails visaDetail) {
+	    return addDocumentForPersonWithId(personId, visaDetail, Person::getVisaDetails, Person::setVisaDetails);
+	}
+	
+	public List<InsuranceDetails> addInsuranceDetailsForPersonWithId(Long personId, InsuranceDetails insuranceDetail) {
+	    return addDocumentForPersonWithId(personId, insuranceDetail, Person::getInsuranceDetails, Person::setInsuranceDetails);
+	}
+	
+	public List<BankDetails> addCardDetailsForPersonWithId(Long personId, Long bankId, CardDetails cardDetail) {
+		BankDetails bankDetails = getAllDocsById(personId).getBankDetails().stream().filter(bank->bank.getId()==bankId).toList().get(0);
+		bankDetails.getCardDetails().add(cardDetail);
+		bankRepository.save(bankDetails);
+	    return addDocumentForPersonWithId(personId, bankDetails, Person::getBankDetails, Person::setBankDetails);
+	}
+
 }
 

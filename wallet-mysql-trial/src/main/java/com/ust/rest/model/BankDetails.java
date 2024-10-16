@@ -47,12 +47,12 @@ public class BankDetails {
     @JsonManagedReference
     private List<CardDetails> cardDetails; // Linking card details to bank
     
-//    @Column(name = "person_id", insertable = false, updatable = false)
-//    private Long personId;
-//
-//    // Method to set person and automatically set personId
-//    public void setPerson(Person person) {
-//        this.person = person;
-//        this.personId = (person != null) ? person.getId() : null; // Set personId based on person
-//    }
+    @Column(name = "person_id", insertable = false, updatable = false)
+    private Long personId;
+
+    // Method to set person and automatically set personId
+    public void setPerson(Person person) {
+        this.person = person;
+        this.personId = (person != null) ? person.getId() : null; // Set personId based on person
+    }
 }
