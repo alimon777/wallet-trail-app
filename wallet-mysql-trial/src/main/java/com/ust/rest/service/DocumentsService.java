@@ -100,12 +100,32 @@ public class DocumentsService {
 	    return addDocumentForPersonWithId(personId, insuranceDetail, Person::getInsuranceDetails, Person::setInsuranceDetails);
 	}
 	
-	public List<BankDetails> addCardDetailsForPersonWithId(Long personId, Long bankId, CardDetails cardDetail) {
-		BankDetails bankDetails = getAllDocsById(personId).getBankDetails().stream().filter(bank->bank.getId()==bankId).toList().get(0);
-		bankDetails.getCardDetails().add(cardDetail);
-		bankRepository.save(bankDetails);
-	    return addDocumentForPersonWithId(personId, bankDetails, Person::getBankDetails, Person::setBankDetails);
+	public BankDetails addCardDetailsForPersonWithId(Long personId, Long bankId, CardDetails cardDetail) {
+	    // Fetch the person
+	    Person person = getAllDocsById(personId);
+
+	    // Fetch the BankDetails by bankId from the person's bank details
+	    BankDetails bankDetails = person.getBankDetails().stream()
+	        .filter(bank -> bank.getId()==bankId)
+	        .findFirst()
+	        .orElseThrow(() -> new RuntimeException("Bank not found with ID: " + bankId));
+
+	    // Set the bank details in the card before adding it
+	    cardDetail.setBankDetails(bankDetails);
+
+	    // Add the card details to the bank
+	    bankDetails.getCardDetails().add(cardDetail);
+
+	    // Save the updated bank details
+	    bankRepository.save(bankDetails);
+
+	    // Return the updated list of bank details
+	    return person.getBankDetails().stream()
+		        .filter(bank -> bank.getId()==bankId)
+		        .findFirst()
+		        .orElseThrow(() -> new RuntimeException("Bank not found with ID: " + bankId));
 	}
+
 
 }
 

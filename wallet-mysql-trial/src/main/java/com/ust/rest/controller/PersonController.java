@@ -109,7 +109,7 @@ public class PersonController {
 
     // Add CardDetails for a specific person and bank
     @PostMapping("/{personId}/{bankId}/card-details/add")
-    public List<BankDetails> addCardDetailsForPersonAndBankId(@PathVariable Long personId, @PathVariable Long bankId, @RequestBody CardDetails cardDetails) {
+    public BankDetails addCardDetailsForPersonAndBankId(@PathVariable Long personId, @PathVariable Long bankId, @RequestBody CardDetails cardDetails) {
         return documentService.addCardDetailsForPersonWithId(personId, bankId, cardDetails);
     }
 }
